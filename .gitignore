@@ -1,0 +1,59 @@
+# ─── Data (raw OULAD CSVs and pipeline outputs) ───────────────────────────────
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# ─── Trained models and arrays ────────────────────────────────────────────────
+models/*
+!models/.gitkeep
+*.pkl
+*.npy
+
+# ─── Generated figures ────────────────────────────────────────────────────────
+figures/*
+!figures/.gitkeep
+
+# ─── Reports (track paper template; ignore generated exports) ───────────────────
+reports/results/*
+!reports/results/.gitkeep
+reports/slides/*
+!reports/slides/.gitkeep
+# research_paper.md is tracked (team fills in results)
+
+# ─── Web (ignore dependencies and build output) ───────────────────────────────
+web/frontend/node_modules/
+web/frontend/dist/
+web/frontend/.env.local
+web/backend/.venv/
+web/backend/__pycache__/
+
+# ─── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+env/
+.env
+
+# ─── Jupyter ──────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ─── IDE / OS ─────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Misc ─────────────────────────────────────────────────────────────────────
+*.log
+.coverage
+htmlcov/
+.pytest_cache/
