@@ -1,10 +1,8 @@
 """
-M4 — Required figures (spec only).
+Visualization — EDA (notebook 01) and clustering figures (notebook 08, M4).
 
-Owner: M4 · Implement in notebooks/08_interpretation_at_risk.ipynb
-Reference: README.md Section 17
-
-Save all plots to figures/ with dpi=150, bbox_inches='tight', then plt.close().
+EDA plots: implemented in eda_plots.py (Afaf, notebook 01).
+Clustering plots: stubs for M4 — implement in 08_interpretation_at_risk.ipynb.
 """
 
 from __future__ import annotations
@@ -12,6 +10,14 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+
+# Re-export EDA helpers (notebook 01)
+from src.eda_plots import (  # noqa: F401
+    plot_demographics_by_outcome,
+    plot_engagement_scatter,
+    plot_result_distribution,
+    plot_temporal_heatmap,
+)
 
 FIGURE_SPECS = {
     "elbow_silhouette": "elbow_silhouette.png",
@@ -22,7 +28,7 @@ FIGURE_SPECS = {
     "radar_chart": "radar_chart.png",
 }
 
-_OWNER = "M4 — implement in 08_interpretation_at_risk.ipynb"
+_OWNER_M4 = "M4 — implement in 08_interpretation_at_risk.ipynb"
 
 
 def plot_elbow_silhouette(
@@ -33,7 +39,7 @@ def plot_elbow_silhouette(
     fig_dir: Path | None = None,
 ) -> Path:
     """Plot 1 — 2-panel Elbow + Silhouette; vertical line at chosen_k."""
-    raise NotImplementedError(_OWNER)
+    raise NotImplementedError(_OWNER_M4)
 
 
 def plot_pca_clusters(
@@ -42,12 +48,12 @@ def plot_pca_clusters(
     fig_dir: Path | None = None,
 ) -> Path:
     """Plot 2 — PC1 vs PC2 scatter, colored by cluster, alpha=0.6."""
-    raise NotImplementedError(_OWNER)
+    raise NotImplementedError(_OWNER_M4)
 
 
 def plot_cluster_heatmap(centroids: pd.DataFrame, fig_dir: Path | None = None) -> Path:
     """Plot 3 — seaborn heatmap, features normalized 0–1, clusters as rows."""
-    raise NotImplementedError(_OWNER)
+    raise NotImplementedError(_OWNER_M4)
 
 
 def plot_cluster_outcome_bar(
@@ -56,7 +62,7 @@ def plot_cluster_outcome_bar(
     fig_dir: Path | None = None,
 ) -> Path:
     """Plot 4 — Stacked bar: crosstab(cluster, final_result), normalize='index'."""
-    raise NotImplementedError(_OWNER)
+    raise NotImplementedError(_OWNER_M4)
 
 
 def plot_dendrogram(
@@ -65,7 +71,7 @@ def plot_dendrogram(
     fig_dir: Path | None = None,
 ) -> Path:
     """Plot 5 — Dendrogram on 200–300 student sample, Ward, truncate_mode='lastp'."""
-    raise NotImplementedError(_OWNER)
+    raise NotImplementedError(_OWNER_M4)
 
 
 def plot_radar_chart(
@@ -74,4 +80,4 @@ def plot_radar_chart(
     fig_dir: Path | None = None,
 ) -> Path:
     """Plot 6 — Radar chart, 5–6 features, one polygon per cluster."""
-    raise NotImplementedError(_OWNER)
+    raise NotImplementedError(_OWNER_M4)
