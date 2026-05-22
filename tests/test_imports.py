@@ -55,13 +55,20 @@ def test_src_imports():
     assert MODULE == "BBB"
     assert PRES == "2013J"
     assert RANDOM_STATE == 42
-    assert len(FEATURE_COLS) == 20
+    assert len(FEATURE_COLS) == 17
 
 
 def test_visualization_specs():
     from src.visualization import FIGURE_SPECS
 
     assert len(FIGURE_SPECS) == 6
+
+
+def test_eda_plot_functions():
+    from src.eda_plots import plot_result_distribution, plot_temporal_heatmap
+
+    assert callable(plot_result_distribution)
+    assert callable(plot_temporal_heatmap)
 
 
 def test_m1_helpers_exist():
@@ -73,16 +80,21 @@ def test_m1_helpers_exist():
     assert hasattr(data_loader, "save_master_raw")
 
 
-def test_m2_m4_stubs_raise():
-    """Non-M1 modules are spec stubs until owners implement them."""
+def test_m2_features_implemented():
+    from src.features import build_feature_matrix, compute_group_a
+
+    assert callable(build_feature_matrix)
+    assert callable(compute_group_a)
+
+
+def test_m3_m4_stubs_raise():
+    """Clustering/evaluation/visualization stubs until M3/M4 implement them."""
     import numpy as np
     import pytest
-    from src import clustering, evaluation, features, preprocessing, visualization
+    from src import clustering, evaluation, preprocessing, visualization
 
     with pytest.raises(NotImplementedError):
-        features.engineer_features(None)
-    with pytest.raises(NotImplementedError):
-        clustering.fit_kmeans(np.zeros((10, 20)), n_clusters=3)
+        clustering.fit_kmeans(np.zeros((10, 18)), n_clusters=3)
     with pytest.raises(NotImplementedError):
         evaluation.silhouette_on_scaled(np.zeros((10, 20)), np.zeros(10, dtype=int))
     with pytest.raises(NotImplementedError):
