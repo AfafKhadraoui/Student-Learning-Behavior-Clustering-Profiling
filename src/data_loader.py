@@ -319,6 +319,9 @@ def build_master_raw(
     master["clicks_per_day"] = master["total_clicks"] / master["module_length"]
     master["active_day_rate"] = master["active_days"] / master["module_length"]
 
+    due = master["total_assessments_due"].replace(0, np.nan)
+    master["missing_rate"] = (master["total_missing"] / due).fillna(0)
+
     assert master.shape[0] == student_info.shape[0], (
         f"Row count changed after merges: {student_info.shape[0]} -> {master.shape[0]}"
     )

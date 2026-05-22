@@ -39,7 +39,7 @@ def separate_labels(master: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     Returns
     -------
     labels_df : id_student, final_result, code_module, code_presentation
-    X_raw : FEATURE_COLS only (20 features)
+    X_raw : FEATURE_COLS only (17 features)
     """
     raise NotImplementedError(_OWNER)
 
