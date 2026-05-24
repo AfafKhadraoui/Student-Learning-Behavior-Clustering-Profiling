@@ -1,0 +1,15 @@
+{
+  "recommendedK": 3,
+  "reason": "Euclidean k-sweep on full cohort (k=2–10): best silhouette at k=3. Final production labels use Manhattan K-Means (L1) on the same k.",
+  "metrics": [
+    { "k": 2, "inertia": 412800, "silhouette": 0.256, "daviesBouldin": 1.676, "calinskiHarabasz": 8920 },
+    { "k": 3, "inertia": 318400, "silhouette": 0.269, "daviesBouldin": 1.674, "calinskiHarabasz": 11450 },
+    { "k": 4, "inertia": 281200, "silhouette": 0.202, "daviesBouldin": 1.902, "calinskiHarabasz": 10120 },
+    { "k": 5, "inertia": 254900, "silhouette": 0.198, "daviesBouldin": 1.95, "calinskiHarabasz": 9680 }
+  ],
+  "distanceMetrics": [
+    { "metric": "euclidean", "silhouette": 0.267, "selected": false, "role": "k-selection reference (Section 5)" },
+    { "metric": "manhattan", "silhouette": 0.269, "selected": true, "role": "primary final model (Section 6)" },
+    { "metric": "mahalanobis", "silhouette": 0.255, "selected": false, "role": "comparison only (Section 4)" }
+  ]
+}

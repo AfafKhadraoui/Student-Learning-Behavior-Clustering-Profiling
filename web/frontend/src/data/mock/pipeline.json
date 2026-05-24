@@ -1,0 +1,11 @@
+[
+  { "id": "00", "name": "Data Engineering", "notebook": "00_data_engineering", "status": "complete", "output": "master_raw.csv" },
+  { "id": "01", "name": "EDA", "notebook": "01_eda", "status": "complete", "output": "figures/eda/" },
+  { "id": "02", "name": "Feature Engineering", "notebook": "02_feature_engineering", "status": "complete", "output": "scaler.pkl, 17 features" },
+  { "id": "03", "name": "K-Means Clustering", "notebook": "03_kmeans_clustering", "status": "complete", "output": "kmeans.pkl (Manhattan L1), k=3, cluster_manhattan" },
+  { "id": "04", "name": "Hierarchical", "notebook": "04_hierarchical_clustering", "status": "planned", "output": "hierarchical.pkl" },
+  { "id": "05", "name": "DBSCAN", "notebook": "05_dbscan_clustering", "status": "planned", "output": "dbscan.pkl" },
+  { "id": "06", "name": "GMM", "notebook": "06_gmm_clustering", "status": "planned", "output": "gmm.pkl" },
+  { "id": "07", "name": "Model Comparison", "notebook": "07_model_comparison", "status": "planned", "output": "evaluation_table.csv" },
+  { "id": "08", "name": "At-Risk Interpretation", "notebook": "08_interpretation_at_risk", "status": "planned", "output": "risk scores" }
+]

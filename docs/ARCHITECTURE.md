@@ -2,6 +2,8 @@
 
 > How folders fit together, why `src/` and `models/` exist, and where each deliverable lives.
 
+**K-Means (notebook 03):** See **[KMEANS_PIPELINE.md](KMEANS_PIPELINE.md)** for the full step-by-step implementation, techniques, file inventory, and run instructions.
+
 ## High-level flow
 
 ```mermaid
@@ -61,16 +63,18 @@ flowchart LR
 
 **Rule of thumb:** Write code in your notebook first; copy into `src/` when it works. Do not edit another member’s `src/` file.
 
-Example:
+Example (notebooks 04+ may import `src/`; **notebook 03 is self-contained** — training API only):
 
 ```python
-# In notebooks/03_kmeans_clustering.ipynb
+# notebooks/04_hierarchical_clustering.ipynb (or backend scripts)
 from src.clustering import fit_kmeans, find_optimal_k
 from src.evaluation import silhouette_on_scaled
 
-optimal = find_optimal_k(X_scaled)
-model = fit_kmeans(X_scaled, n_clusters=chosen_k)  # saves to models/kmeans.pkl
+k, sweep, reason = find_optimal_k(X_scaled)
+model = fit_kmeans(X_scaled, n_clusters=k)  # saves to models/kmeans.pkl
 ```
+
+Notebook **03** defines all plotting, distance analysis, and ENSIA interpretation **inline**; `src/clustering/` keeps only `train_kmeans.py` + `evaluate.py` for reuse in later modules and tests.
 
 The **website backend** will also import from `src/` and load artifacts from `models/` — without re-running notebooks.
 
