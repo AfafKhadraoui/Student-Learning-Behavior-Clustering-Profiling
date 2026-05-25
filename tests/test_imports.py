@@ -44,8 +44,8 @@ def test_research_paper_template():
 
 def test_final_notebooks():
     root = Path(__file__).resolve().parent.parent
-    assert (root / "notebooks" / "MAIN_NOTEBOOK.ipynb").is_file()
     assert (root / "notebooks" / "07_model_comparison.ipynb").is_file()
+    assert (root / "notebooks" / "03_kmeans_clustering.ipynb").is_file()
 
 
 def test_src_imports():
@@ -87,15 +87,33 @@ def test_m2_features_implemented():
     assert callable(compute_group_a)
 
 
-def test_m3_m4_stubs_raise():
-    """Clustering/evaluation/visualization stubs until M3/M4 implement them."""
+def test_m3_clustering_implemented():
+    """M3 clustering module exposes train/evaluate API."""
     import numpy as np
-    import pytest
-    from src import clustering, evaluation, preprocessing, visualization
+    from src.clustering import fit_kmeans, sweep_kmeans_k
 
-    with pytest.raises(NotImplementedError):
-        clustering.fit_kmeans(np.zeros((10, 18)), n_clusters=3)
-    with pytest.raises(NotImplementedError):
-        evaluation.silhouette_on_scaled(np.zeros((10, 20)), np.zeros(10, dtype=int))
+    rng = np.random.default_rng(42)
+    X = rng.normal(size=(200, 17))
+    model = fit_kmeans(X, n_clusters=3)
+    assert model.n_clusters == 3
+    assert len(model.labels_) == 200
+
+
+def test_m3_evaluation_metrics():
+    import numpy as np
+    from src import evaluation
+
+    rng = np.random.default_rng(42)
+    X = rng.normal(size=(100, 17))
+    labels = rng.integers(0, 3, size=100)
+    score = evaluation.silhouette_on_scaled(X, labels)
+    assert -1.0 <= score <= 1.0
+
+
+def test_m4_visualization_stubs_raise():
+    """M4 clustering plot stubs until 08_interpretation notebook."""
+    import pytest
+    from src import visualization
+
     with pytest.raises(NotImplementedError):
         visualization.plot_pca_clusters(None)

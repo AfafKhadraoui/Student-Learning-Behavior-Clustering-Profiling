@@ -1,0 +1,117 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  --ensia-bg: #1c1718;
+  --ensia-sidebar: #0f123f;
+  --ensia-card: #252025;
+  --ensia-accent: #fe981e;
+  --ensia-accent-hover: #e08918;
+  --ensia-text: #ffffff;
+  --ensia-text-secondary: #d9d9d9;
+  --ensia-muted: #9a9099;
+  --ensia-label: #5c5760;
+  --background: #1c1718;
+  --foreground: #ffffff;
+  --card: #252025;
+  --card-foreground: #ffffff;
+  --popover: #252025;
+  --popover-foreground: #ffffff;
+  --primary: #fe981e;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(255, 255, 255, 0.05);
+  --secondary-foreground: #d9d9d9;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #9a9099;
+  --accent: rgba(254, 152, 30, 0.12);
+  --accent-foreground: #fe981e;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.1);
+  --input-background: rgba(255, 255, 255, 0.05);
+  --ring: #fe981e;
+  --radius: 0.75rem;
+}
+
+@theme inline {
+  --font-sans: 'Visby CF', ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-size: var(--font-size);
+  }
+
+  /* Single themed scrollbar — only on .custom-scrollbar containers */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(254, 152, 30, 0.35) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(254, 152, 30, 0.35);
+    border-radius: 999px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(254, 152, 30, 0.55);
+  }
+
+  /* Welcome screen scrolls independently with themed scrollbar */
+  .welcome-screen {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(254, 152, 30, 0.35) transparent;
+  }
+
+  html.welcome-active,
+  html.welcome-active body {
+    overflow: hidden;
+  }
+}

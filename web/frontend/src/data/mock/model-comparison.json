@@ -1,0 +1,42 @@
+[
+  {
+    "algorithm": "K-Means",
+    "status": "active",
+    "k": 3,
+    "silhouette": 0.72,
+    "daviesBouldin": 0.89,
+    "ariVsKmeans": 1.0,
+    "noisePct": 0,
+    "notes": "Selected primary model (notebook 03)"
+  },
+  {
+    "algorithm": "Hierarchical (Ward)",
+    "status": "planned",
+    "k": null,
+    "silhouette": null,
+    "daviesBouldin": null,
+    "ariVsKmeans": null,
+    "noisePct": null,
+    "notes": "Notebook 04 — pending"
+  },
+  {
+    "algorithm": "DBSCAN",
+    "status": "planned",
+    "k": null,
+    "silhouette": null,
+    "daviesBouldin": null,
+    "ariVsKmeans": null,
+    "noisePct": null,
+    "notes": "Notebook 05 — pending"
+  },
+  {
+    "algorithm": "GMM",
+    "status": "planned",
+    "k": null,
+    "silhouette": null,
+    "daviesBouldin": null,
+    "ariVsKmeans": null,
+    "noisePct": null,
+    "notes": "Notebook 06 — pending"
+  }
+]
