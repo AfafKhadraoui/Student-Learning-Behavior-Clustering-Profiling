@@ -1,0 +1,43 @@
+[
+  {
+    "id": "kmeans",
+    "name": "K-Means",
+    "notebook": "03_kmeans_clustering",
+    "status": "active",
+    "description": "Primary production model. Elbow + silhouette k-selection, distance-metric sweep, ENSIA cluster interpretation.",
+    "artifact": "models/kmeans.pkl",
+    "distanceMetric": "manhattan",
+    "features": 17,
+    "selectedK": 3
+  },
+  {
+    "id": "hierarchical",
+    "name": "Hierarchical (Ward)",
+    "notebook": "04_hierarchical_clustering",
+    "status": "planned",
+    "description": "Agglomerative clustering with dendrogram cut. Compare ARI vs K-Means baseline.",
+    "artifact": "models/hierarchical.pkl",
+    "features": 20,
+    "selectedK": null
+  },
+  {
+    "id": "dbscan",
+    "name": "DBSCAN",
+    "notebook": "05_dbscan_clustering",
+    "status": "planned",
+    "description": "Density-based clustering with noise points. Useful for outlier / disengaged detection.",
+    "artifact": "models/dbscan.pkl",
+    "features": 20,
+    "selectedK": null
+  },
+  {
+    "id": "gmm",
+    "name": "Gaussian Mixture (GMM)",
+    "notebook": "06_gmm_clustering",
+    "status": "planned",
+    "description": "Soft cluster assignments and probabilistic profiles for intervention targeting.",
+    "artifact": "models/gmm.pkl",
+    "features": 20,
+    "selectedK": null
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "id": 0,
+    "name": "Engaged Last-Minute Learners",
+    "shortName": "Last-Minute (On-Track)",
+    "value": 17830,
+    "color": "#FE981E",
+    "riskLevel": "Low-moderate",
+    "pctPass": 68.5,
+    "pctFailWithdrawn": 14.7,
+    "interpretation": "High VLE use near deadlines; many still pass. Pass 68%, Fail+Withdrawn 15%.",
+    "intervention": "Optional time-management nudges; not default at-risk by cluster alone."
+  },
+  {
+    "id": 1,
+    "name": "Struggling Students",
+    "shortName": "Struggling",
+    "value": 7185,
+    "color": "#F87171",
+    "riskLevel": "High",
+    "pctPass": 1.7,
+    "pctFailWithdrawn": 98.2,
+    "interpretation": "Very high missing work; engagement drops over time. Fail+Withdrawn 98%.",
+    "intervention": "Academic advising, missing-assessment recovery, tutoring."
+  },
+  {
+    "id": 2,
+    "name": "Disengaged / Withdrawn",
+    "shortName": "Disengaged",
+    "value": 7578,
+    "color": "#6B7280",
+    "riskLevel": "Very high",
+    "pctPass": 0.4,
+    "pctFailWithdrawn": 99.5,
+    "interpretation": "Minimal VLE activity; withdrawn 77%. Fail+Withdrawn 100%.",
+    "intervention": "Early-week zero-activity alerts; welfare pathways weeks 1–3."
+  }
+]

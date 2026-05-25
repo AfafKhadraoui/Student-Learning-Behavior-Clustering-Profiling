@@ -1,0 +1,34 @@
+[
+  {
+    "id": "total-students",
+    "label": "Total Students",
+    "value": 32593,
+    "trend": 10.2,
+    "trendLabel": "OULAD cohort registrations",
+    "trendUp": true
+  },
+  {
+    "id": "at-risk",
+    "label": "At-Risk Flagged",
+    "value": 14763,
+    "trend": 3.1,
+    "trendLabel": "Clusters 1 + 2 (high / very high risk)",
+    "trendUp": true
+  },
+  {
+    "id": "interventions",
+    "label": "Interventions Done",
+    "value": 18,
+    "trend": 7.2,
+    "trendLabel": "+12.5% this week",
+    "trendUp": true
+  },
+  {
+    "id": "silhouette",
+    "label": "Silhouette Score",
+    "value": "0.72",
+    "trend": 2.56,
+    "trendLabel": "K-Means k=3 (notebook 03)",
+    "trendUp": true
+  }
+]

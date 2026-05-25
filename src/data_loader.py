@@ -93,6 +93,14 @@ def load_oulad(raw_path: Path | None = None) -> dict[str, pd.DataFrame]:
             "studentVle.csv",
             raw_path,
             dtype=vle_dtypes,
+            usecols=[
+                "code_module",
+                "code_presentation",
+                "id_student",
+                "id_site",
+                "date",
+                "sum_click",
+            ],
             low_memory=False,
         ),
     }
@@ -292,11 +300,14 @@ def build_master_raw(
 
     vle_agg = build_vle_aggregations(student_vle, vle)
     master = master.merge(vle_agg, on=STUDENT_KEYS, how="left")
+    # Drop duplicate column names if any merge produced overlaps
+    master = master.loc[:, ~master.columns.duplicated()]
 
     week_cols = [c for c in master.columns if c.startswith("week_") and c.endswith("_clicks")]
     fill_cols = VLE_AGG_COLS + week_cols
-    fill_cols = [c for c in fill_cols if c in master.columns]
-    master[fill_cols] = master[fill_cols].fillna(0)
+    fill_cols = list(dict.fromkeys(c for c in fill_cols if c in master.columns))
+    for col in fill_cols:
+        master[col] = master[col].fillna(0)
 
     assess_agg = build_assessment_aggregations(student_assess, assessments)
     master = master.merge(assess_agg, on=STUDENT_KEYS, how="left")

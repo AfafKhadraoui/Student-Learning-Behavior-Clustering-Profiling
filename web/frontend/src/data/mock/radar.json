@@ -1,0 +1,42 @@
+[
+  {
+    "subject": "VLE Clicks (log)",
+    "highPerformer": 85,
+    "consistentLearner": 70,
+    "lastMinute": 55,
+    "struggling": 35,
+    "disengaged": 10
+  },
+  {
+    "subject": "Active Days",
+    "highPerformer": 90,
+    "consistentLearner": 75,
+    "lastMinute": 60,
+    "struggling": 25,
+    "disengaged": 5
+  },
+  {
+    "subject": "Late Activity",
+    "highPerformer": 75,
+    "consistentLearner": 50,
+    "lastMinute": 85,
+    "struggling": 15,
+    "disengaged": 5
+  },
+  {
+    "subject": "Avg Score",
+    "highPerformer": 88,
+    "consistentLearner": 72,
+    "lastMinute": 65,
+    "struggling": 40,
+    "disengaged": 5
+  },
+  {
+    "subject": "Submissions",
+    "highPerformer": 92,
+    "consistentLearner": 80,
+    "lastMinute": 70,
+    "struggling": 20,
+    "disengaged": 8
+  }
+]

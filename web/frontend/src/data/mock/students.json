@@ -1,0 +1,62 @@
+[
+  {
+    "id": "STU-12594",
+    "name": "Frank Murlo",
+    "cluster": "Engaged Last-Minute Learners",
+    "risk": "Low",
+    "score": 8.5,
+    "activeDays": 42,
+    "submissions": 28,
+    "avgGrade": 92
+  },
+  {
+    "id": "STU-12490",
+    "name": "Thomas Bleir",
+    "cluster": "Engaged Last-Minute Learners",
+    "risk": "Low",
+    "score": 7.2,
+    "activeDays": 38,
+    "submissions": 26,
+    "avgGrade": 85
+  },
+  {
+    "id": "STU-12306",
+    "name": "Bill Norton",
+    "cluster": "Engaged Last-Minute Learners",
+    "risk": "Moderate",
+    "score": 5.8,
+    "activeDays": 24,
+    "submissions": 18,
+    "avgGrade": 72
+  },
+  {
+    "id": "STU-12105",
+    "name": "Sarah Chen",
+    "cluster": "Struggling Students",
+    "risk": "High",
+    "score": 3.2,
+    "activeDays": 12,
+    "submissions": 8,
+    "avgGrade": 58
+  },
+  {
+    "id": "STU-11998",
+    "name": "Mike Wilson",
+    "cluster": "Disengaged / Withdrawn",
+    "risk": "Critical",
+    "score": 1.8,
+    "activeDays": 5,
+    "submissions": 3,
+    "avgGrade": 42
+  },
+  {
+    "id": "STU-11876",
+    "name": "Emily Davis",
+    "cluster": "Engaged Last-Minute Learners",
+    "risk": "Low",
+    "score": 9.1,
+    "activeDays": 45,
+    "submissions": 30,
+    "avgGrade": 95
+  }
+]

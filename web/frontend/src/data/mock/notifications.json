@@ -1,0 +1,40 @@
+[
+  {
+    "id": "n1",
+    "type": "alert",
+    "title": "12 new at-risk students flagged",
+    "message": "Struggling Students cluster grew 3.1% this week. Review recommended interventions.",
+    "time": "5 min ago",
+    "read": false,
+    "actionLabel": "View students",
+    "actionNav": "students"
+  },
+  {
+    "id": "n2",
+    "type": "info",
+    "title": "K-Means model ready",
+    "message": "Notebook 03 completed — k=3 selected with silhouette 0.72.",
+    "time": "1 hr ago",
+    "read": false,
+    "actionLabel": "Open ML Lab",
+    "actionNav": "models"
+  },
+  {
+    "id": "n3",
+    "type": "success",
+    "title": "Data pipeline synced",
+    "message": "master_raw.csv updated with 32,593 student registrations.",
+    "time": "3 hr ago",
+    "read": true
+  },
+  {
+    "id": "n4",
+    "type": "alert",
+    "title": "Disengaged cluster alert",
+    "message": "7,578 students in minimal VLE use profile — early outreach window closing.",
+    "time": "Yesterday",
+    "read": true,
+    "actionLabel": "View clusters",
+    "actionNav": "clusters"
+  }
+]

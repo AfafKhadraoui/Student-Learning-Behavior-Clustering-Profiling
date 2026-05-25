@@ -1,0 +1,9 @@
+[
+  { "name": "studentInfo.csv", "status": "ready", "size": "2.3 MB" },
+  { "name": "studentAssessment.csv", "status": "ready", "size": "5.1 MB" },
+  { "name": "assessments.csv", "status": "ready", "size": "1.8 MB" },
+  { "name": "courses.csv", "status": "missing", "size": "-" },
+  { "name": "studentRegistration.csv", "status": "ready", "size": "3.2 MB" },
+  { "name": "studentVle.csv", "status": "processing", "size": "8.7 MB" },
+  { "name": "vle.csv", "status": "ready", "size": "4.5 MB" }
+]
