@@ -1,0 +1,238 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{csquotes}
+\usepackage[numbers,sort&compress]{natbib}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=blue!60!black,
+  urlcolor=blue!60!black,
+  pdftitle={Unsupervised Clustering of Student Behaviour in OULAD},
+  pdfauthor={Afaf, Serine, Lydia, Amel}
+}
+
+\graphicspath{{../../figures/}{../figures/}{figures/}}
+
+\title{\textbf{Unsupervised Clustering of Student Behaviour in OULAD}}
+\author{Afaf, Serine, Lydia, Amel \\ ENSIA Machine Learning Project}
+\date{Spring 2025--2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This project investigates whether unsupervised clustering can recover meaningful learning profiles from the Open University Learning Analytics Dataset (OULAD) and support early identification of at-risk students. We built a full pipeline that combines data engineering, exploratory data analysis, feature engineering, preprocessing, and five clustering approaches: K-Means, hierarchical clustering with Ward linkage, DBSCAN, Gaussian mixture models (GMM), and temporal clustering with dynamic time warping (DTW). The models were evaluated with internal cluster validity metrics and post-hoc external checks against final academic outcomes. The strongest compact tabular baseline was K-Means, while GMM provided softer probabilistic assignments and DTW uncovered a distinct temporal structure that differs from static feature-based clustering. The comparison notebook exports reusable summaries that are consumed directly by the web dashboard, making the research workflow reproducible end to end.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+Online learning platforms generate rich interaction traces that can be used to identify behavioral archetypes, engagement patterns, and students who may need support. This project asks a simple question: can unsupervised learning recover educationally meaningful clusters without using the final result as an input feature? To answer it, we designed a pipeline around the OULAD dataset and compared several complementary clustering strategies.
+
+\subsection{Research question}
+\begin{quote}
+Can unsupervised clustering recover meaningful learning profiles and identify at-risk students before failure or withdrawal?
+\end{quote}
+
+\subsection{Main contributions}
+\begin{itemize}[leftmargin=*]
+  \item A full data pipeline from raw OULAD CSV files to analysis-ready student profiles.
+  \item Behavioral features derived from clicks, assessments, registration timing, and engagement patterns.
+  \item A comparison of K-Means, hierarchical clustering, DBSCAN, GMM, and DTW-based temporal clustering.
+  \item A reproducible notebook-based comparison table exported for the web application.
+  \item A FastAPI backend and dashboard that consume the model outputs directly.
+\end{itemize}
+
+\section{Related work}
+The work builds on three main strands of literature. First, OULAD provides a standard benchmark for learning analytics research \citep{kuzilek2017oulad}. Second, prior unsupervised work on learner behavior showed that clustering can reveal interpretable trajectories and at-risk groups \citep{peach2019unsupervised}. Third, a recent review by Jin et al. highlighted the value of combining behavioral features, clustering, and post-hoc educational interpretation \citep{jin2024review}.
+
+For the methods themselves, K-Means follows the classic centroid-based formulation introduced by MacQueen \citep{macqueen1967}, Ward clustering minimizes within-cluster variance \citep{ward1963}, DBSCAN discovers density-based structure and noise points \citep{ester1996dbscan}, GMM models soft assignments with Gaussian components \citep{bishop2006prml}, and DTW aligns temporal sequences by dynamic programming \citep{sakoe1978dtw}. Community detection in the DTW graph uses the Louvain idea of modularity maximization \citep{blondel2008louvain}.
+
+\section{Dataset and data engineering}
+\subsection{Dataset}
+The project uses the Open University Learning Analytics Dataset (OULAD) and focuses on the BBB--2013J cohort. The raw inputs come from seven CSV files:
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+File & Purpose \\
+\midrule
+\texttt{studentInfo.csv} & Student demographics and final outcome \\
+\texttt{studentRegistration.csv} & Registration dates and withdrawal information \\
+\texttt{studentAssessment.csv} & Assessment submissions and grades \\
+\texttt{assessments.csv} & Assessment metadata and deadlines \\
+\texttt{studentVle.csv} & Weekly virtual learning environment click logs \\
+\texttt{vle.csv} & Virtual learning environment activity types \\
+\texttt{courses.csv} & Course and presentation metadata \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Merge strategy}
+The raw tables are joined on student, course, and presentation identifiers to produce a master student table. The merge sequence preserves the student-level row structure while aggregating clickstream and assessment behavior into a single analysis-ready record. In the current project implementation, the processed master table contains 32,593 students.
+
+\subsection{Feature engineering}
+Behavioral features are derived from three signals:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Click behavior:} total clicks, active days, early/late click ratios, click trend, and final-week engagement.
+  \item \textbf{Assessment behavior:} average score, score consistency, trend, missing-submission rate, and attempt-related signals.
+  \item \textbf{Registration and profile signals:} lead time before course start, prior attempts, and education encoding.
+\end{itemize}
+These features are designed to characterize how students study, not only what grade they obtain at the end.
+
+\subsection{Preprocessing}
+The preprocessing stage includes:
+\begin{itemize}[leftmargin=*]
+  \item missing-value handling and safe aggregation,
+  \item skew reduction for count-like variables using log-style transforms where appropriate,
+  \item standardization before clustering,
+  \item PCA only for visualization,
+  \item separation of modeling features from post-hoc labels such as \texttt{final\_result}.
+\end{itemize}
+
+\section{Exploratory data analysis}
+EDA was used to verify that the behavioral features were informative before clustering. The notebooks inspect:
+\begin{itemize}[leftmargin=*]
+  \item distributions of clicks, scores, and activity counts,
+  \item correlations among engagement and assessment variables,
+  \item class imbalance in final outcomes,
+  \item temporal differences between successful and at-risk students,
+  \item PCA and 2D projections for qualitative inspection.
+\end{itemize}
+The key pattern is that at-risk students tend to exhibit lower sustained engagement, weaker assessment completion, and more abrupt drops in activity.
+
+\section{Clustering methods}
+\subsection{K-Means}
+K-Means serves as the main tabular baseline. It is fitted on standardized behavioral features and used to produce the primary student partition. The method is fast, interpretable, and works well when clusters are compact and roughly spherical. In the project, K-Means with $k=3$ is the main reference baseline.
+
+\subsection{Hierarchical clustering}
+Hierarchical clustering uses Ward linkage to minimize the within-cluster variance at each merge step. This method is useful for inspecting nested structure and for visualizing how student groups merge across scales. It also provides an alternative cluster geometry to K-Means and helps verify whether the main structure is stable.
+
+\subsection{DBSCAN}
+DBSCAN is included because it can label low-density students as noise rather than forcing every student into a cluster. This is especially relevant for learning analytics because unusual trajectories may correspond to disengagement or highly irregular study patterns. In this project, DBSCAN is treated as an outlier-aware comparator rather than a direct replacement for K-Means.
+
+\subsection{Gaussian mixture models}
+GMM extends the baseline by allowing soft assignments. Instead of assigning one hard cluster only, each student receives posterior probabilities over components. This is useful when student behavior lies between multiple archetypes or when cluster boundaries are not perfectly crisp.
+
+\subsection{DTW-based temporal clustering}
+DTW clusters raw weekly click sequences instead of summary statistics. This makes it sensitive to engagement timing and shape, not only magnitude. In the current pipeline, DTW is combined with a graph-based post-processing step to merge fine-grained groups into broader archetypes. This branch is important because it answers a different question from the tabular models: not ``who is similar overall,'' but ``who follows a similar engagement trajectory over time.''
+
+\section{Evaluation protocol}
+Models are evaluated with internal and external criteria:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Internal metrics:} Silhouette score and Davies--Bouldin index to judge compactness and separation.
+  \item \textbf{External checks:} adjusted Rand index (ARI) and contingency analysis against the final result labels.
+  \item \textbf{At-risk interpretation:} concentration of Fail/Withdrawn students inside the worst-performing cluster.
+\end{itemize}
+This evaluation does not use final result as a training target. It is only used after clustering to interpret the quality of the discovered profiles.
+
+\section{Results}
+\subsection{Model comparison}
+The comparison notebook exports the results below and makes them available to the dashboard through a CSV artifact. The table summarizes the notebook 07 output.
+
+\begin{longtable}{p{3.7cm}ccccp{2.2cm}p{3.2cm}}
+\toprule
+Algorithm & $k$ & Silhouette & DBI & ARI & Noise & Notes \\
+\midrule
+\endfirsthead
+\toprule
+Algorithm & $k$ & Silhouette & DBI & ARI & Noise & Notes \\
+\midrule
+\endhead
+K-Means (Euclidean) & 3 & 0.2609 & 1.7035 & 0.3991 & 0 & Baseline \\
+Hierarchical (Ward) & 4 & 0.1919 & 1.8255 & 0.3264 & 0 & Ward linkage \\
+DBSCAN & 4 & 0.0598 & 2.4574 & 0.1601 & 4859 & Noise-aware \\
+GMM & 4 & 0.1117 & 2.3535 & 0.2317 & 0 & Soft assignments \\
+DTW (fine) & 21 & -0.1319 & 6.6881 & 0.0233 & 32045 & Temporal \\
+DTW (merged) & 3 & -0.0064 & 7.4920 & 0.0280 & 32323 & Temporal merged \\
+\bottomrule
+\end{longtable}
+
+\subsection{Interpretation of the results}
+Several conclusions stand out:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{K-Means} has the strongest geometric quality on the tabular features, which is expected because it is optimized for compact centroid-based partitions.
+  \item \textbf{Hierarchical clustering} produces a useful alternative view of the same feature space, with slightly weaker compactness but a similar educational interpretation.
+  \item \textbf{DBSCAN} is valuable for revealing unusual behavior and noise, but it is more sensitive to parameter choice and less stable on this dataset.
+  \item \textbf{GMM} gives probabilistic membership and exposes borderline students that do not fit a single crisp group.
+  \item \textbf{DTW} captures temporal shape rather than static summaries, which explains the low ARI against the feature-based baselines. That disagreement is informative rather than a failure.
+\end{itemize}
+
+\subsection{At-risk insight}
+The clustering results consistently isolate a group enriched in Fail and Withdrawn outcomes. This supports the educational interpretation that engagement patterns can provide an early warning signal even before the final grade is known. The most useful practical output is therefore not only a partition of students, but also a profile of who may benefit from intervention.
+
+\subsection{Visual outputs}
+The project also produces figures for:
+\begin{itemize}[leftmargin=*]
+  \item cluster size comparisons,
+  \item PCA views across methods,
+  \item cross-method ARI,
+  \item at-risk concentration,
+  \item DTW multiscale resolution and DTW graph structure,
+  \item radar-style cluster summaries.
+\end{itemize}
+
+\section{Discussion}
+\subsection{What the comparison means}
+The models are not redundant; they answer different questions. K-Means provides the cleanest baseline for tabular behavior. GMM adds uncertainty. DBSCAN highlights outliers. Hierarchical clustering exposes nesting. DTW moves the analysis from static feature summaries to sequence shape. Together, they form a richer picture of student behavior than any single model could provide.
+
+\subsection{Relation to prior work}
+The overall findings are consistent with prior OULAD research and with the literature on unsupervised learner profiling. In particular, the presence of a distinct at-risk group and the usefulness of temporal structure align well with the ideas discussed by Peach et al. \citep{peach2019unsupervised}. The project also follows the general recommendations from the recent review by Jin et al. \citep{jin2024review} by pairing clustering with post-hoc educational interpretation.
+
+\subsection{Limitations}
+\begin{itemize}[leftmargin=*]
+  \item The main cohort is a single module/presentation slice, so generalization should be tested on more cohorts.
+  \item Cluster labels are inherently descriptive, not causal.
+  \item DBSCAN and DTW are sensitive to parameter choices and data representation.
+  \item Post-hoc outcome comparison is informative but does not prove predictive causality.
+\end{itemize}
+
+\subsection{Future work}
+Future extensions could include cross-cohort validation, stronger temporal models, automated intervention rules, and a more formal student-facing dashboard evaluation.
+
+\section{Web integration and reproducibility}
+A key engineering outcome of this project is that the notebook outputs are not isolated. The model comparison notebook exports a reusable summary CSV, and the FastAPI backend reads it directly to populate the ML Lab page. This makes the research workflow reproducible and keeps the web application synchronized with the latest notebook run.
+
+\section{Conclusion}
+This project shows that unsupervised learning can reveal meaningful learning profiles from OULAD when the pipeline is carefully designed. The strongest baseline comes from K-Means on standardized behavioral features, GMM adds probabilistic nuance, DBSCAN detects outliers, hierarchical clustering shows nested structure, and DTW uncovers temporal patterns that static models miss. Most importantly, the clusters are educationally interpretable and consistently highlight an at-risk group, which supports the project’s central goal of combining clustering with early-warning insight.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+\section{Reproducibility notes}
+\begin{itemize}[leftmargin=*]
+  \item Notebook 07 writes the comparison summary to \texttt{reports/results/model\_comparison\_summary.csv}.
+  \item The dashboard reads the same comparison artifact so the UI stays synchronized.
+  \item Generated figures are stored in \texttt{figures/}.
+\end{itemize}
+
+\section{Suggested submission bundle}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{reports/overleaf/main.tex}
+  \item \texttt{reports/overleaf/references.bib}
+  \item \texttt{figures/}
+  \item \texttt{reports/results/}
+\end{itemize}
+
+\end{document}
