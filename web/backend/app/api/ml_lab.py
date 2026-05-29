@@ -193,15 +193,33 @@ def _build_comparison(ds) -> list[ModelComparisonRow]:
     if ds.comparison is not None:
         rows = []
         for _, row in ds.comparison.iterrows():
+            notes_value = (
+                str(row.get('Soft assignments', '')).strip()
+                if str(row.get('Soft assignments', '')).strip() not in {'', '—', 'nan', 'NaN'}
+                else str(row.get('Temporal input', '')).strip()
+            )
+            if notes_value in {'', '—', 'nan', 'NaN'}:
+                notes_value = 'Notebook 07 comparison output'
+
+            noise_value = (
+                row.get('noisePct')
+                if row.get('noisePct') is not None
+                else row.get('noise_pct')
+            )
+            if noise_value is None:
+                noise_value = row.get('% noise')
+            if noise_value is None:
+                noise_value = row.get('Noise points')
+
             rows.append(ModelComparisonRow(
                 algorithm=str(row.get("Method", "")),
                 status="active",
                 k=_safe_int(row.get("k")),
                 silhouette=_safe_float(row.get("Silhouette")),
                 daviesBouldin=_safe_float(row.get("Davies-Bouldin")),
-                ariVsKmeans=_safe_float(row.get("ARI vs outcome")),
-                noisePct=_safe_float(row.get("noisePct") or row.get("noise_pct") or row.get("% noise")),
-                notes=str(row.get("Temporal input", "")) or None,
+                ariVsKmeans=_safe_float(row.get("ARI vs outcome") or row.get("ARI vs K-Means") or row.get("ARI vs Kmeans")),
+                noisePct=_safe_float(noise_value),
+                notes=notes_value,
             ))
         return rows
 

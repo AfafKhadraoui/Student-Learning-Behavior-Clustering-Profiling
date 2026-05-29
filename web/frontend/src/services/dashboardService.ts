@@ -34,14 +34,24 @@ export async function fetchDashboardOverview(): Promise<DashboardOverview> {
   if (USE_MOCK_API) {
     return Promise.resolve(loadMockOverview())
   }
-  return apiGet<DashboardOverview>('/dashboard/overview')
+  try {
+    return await apiGet<DashboardOverview>('/dashboard/overview')
+  } catch (error) {
+    console.warn('Falling back to mock dashboard data:', error)
+    return loadMockOverview()
+  }
 }
 
 export async function fetchClusterAnalysis(): Promise<ClusterAnalysis> {
   if (USE_MOCK_API) {
     return Promise.resolve(loadMockClusterAnalysis())
   }
-  return apiGet<ClusterAnalysis>('/clusters/analysis')
+  try {
+    return await apiGet<ClusterAnalysis>('/clusters/analysis')
+  } catch (error) {
+    console.warn('Falling back to mock cluster analysis:', error)
+    return loadMockClusterAnalysis()
+  }
 }
 
 export { loadMockOverview, loadMockClusterAnalysis }
