@@ -10,6 +10,7 @@ from scipy.sparse.csgraph import minimum_spanning_tree
 from scipy.sparse import csr_matrix
 from dtaidistance import dtw
 
+
 try:
     import community as community_louvain  # provided by python-louvain
 except ImportError as exc:
@@ -35,7 +36,7 @@ class DTWClusteringPipeline:
         sigma_quantile: float = 0.5, 
         relaxation: float = 1.0, 
         resolutions: list[float] | None = None,
-        n_runs: int = 20,
+        n_runs: int = 50,
         random_state: int = 42
     ):
         self.sigma_quantile = sigma_quantile
@@ -49,24 +50,37 @@ class DTWClusteringPipeline:
         self.multiscale_results_ = None
         self.best_resolution_ = None
         self.labels_ = None
+        self.input_matrices_ = None
+        self.input_weights_ = None
         
-    def _compute_dtw_similarity_matrix(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
-        X = np.ascontiguousarray(X, dtype=np.float64)
-        N = len(X)
-        print(f"Computing DTW distances for {N} students x {X.shape[1]} features...")
+    def _compute_dtw_similarity_matrix(self, X_list: list[np.ndarray], weights: list[float]) -> tuple[np.ndarray, np.ndarray, float]:
+        if len(X_list) == 0:
+            raise ValueError("X_list must contain at least one input matrix.")
+        if len(X_list) != len(weights):
+            raise ValueError("X_list and weights must have the same length.")
+
+        X_list = [np.ascontiguousarray(X, dtype=np.float64) for X in X_list]
+        N = len(X_list[0])
+        if any(len(X) != N for X in X_list):
+            raise ValueError("All input matrices must have the same number of students in the same row order.")
+
+        for idx, X in enumerate(X_list):
+            print(f"Input {idx + 1}: {N} students x {X.shape[1]} features (weight={weights[idx]:.2f})")
+
+        print(f"Computing weighted DTW distances for {N} students across {len(X_list)} temporal signals...")
         
         dtw_distances = np.zeros((N, N), dtype=np.float64)
         for i in range(N):
             for j in range(i + 1, N):
-                d = dtw.distance_fast(X[i], X[j])
-                
-                # Handle inf/nan from degenerate sequences (all-zero rows)
-                if not np.isfinite(d):
-                    # Fallback: use Euclidean distance as safe substitute
-                    d = float(np.sqrt(np.sum((X[i] - X[j]) ** 2)))
-                
-                dtw_distances[i, j] = d
-                dtw_distances[j, i] = d
+                d_combined = 0.0
+                for X, w in zip(X_list, weights):
+                    d = dtw.distance_fast(X[i], X[j])
+                    if not np.isfinite(d):
+                        d = float(np.sqrt(np.sum((X[i] - X[j]) ** 2)))
+                    d_combined += w * d
+
+                dtw_distances[i, j] = d_combined
+                dtw_distances[j, i] = d_combined
             
             if i % 50 == 0:
                 print(f"  Progress: {i}/{N} ({100*i/N:.0f}%)")
@@ -76,7 +90,7 @@ class DTWClusteringPipeline:
         if sigma2 == 0:
             sigma2 = 1e-6
             
-        print(f"\nDTW distance stats:")
+        print("\nDTW distance stats:")
         print(f"  min={upper_tri.min():.4f}, median={np.median(upper_tri):.4f}, max={upper_tri.max():.4f}")
         print(f"  sigma^2 = {sigma2:.4f}")
         
@@ -108,7 +122,7 @@ class DTWClusteringPipeline:
                 if not G.has_edge(i, j) and similarity_matrix[i, j] > threshold:
                     G.add_edge(i, j, weight=similarity_matrix[i, j])
                     
-        print(f"Graph built:")
+        print("Graph built:")
         print(f"  Nodes: {G.number_of_nodes()}")
         print(f"  Edges: {G.number_of_edges()} (from {N*(N-1)//2} total possible)")
         print(f"  Sparsity: {G.number_of_edges() / (N*(N-1)//2) * 100:.1f}% of edges retained")
@@ -118,7 +132,6 @@ class DTWClusteringPipeline:
         
     def _run_louvain_multiscale(self, G: nx.Graph) -> dict:
         results = {}
-        N = G.number_of_nodes()
         node_list = list(G.nodes())
         
         print(f"Running Louvain at {len(self.resolutions)} resolution levels ({self.n_runs} runs each)...")
@@ -158,26 +171,27 @@ class DTWClusteringPipeline:
             
         return results
 
-    def fit_predict(self, X: np.ndarray) -> np.ndarray:
+    def fit_predict(self, X_list: list[np.ndarray], weights: list[float]) -> np.ndarray:
         """
         Run the full DTW clustering pipeline on the input feature matrix X.
         
         Returns:
             np.ndarray: Cluster labels for each sample in X.
         """
-        self.similarity_matrix_, _, _ = self._compute_dtw_similarity_matrix(X)
+        self.input_matrices_ = X_list
+        self.input_weights_ = weights
+        self.similarity_matrix_, _, _ = self._compute_dtw_similarity_matrix(X_list, weights)
         self.graph_ = self._build_rmst_graph(self.similarity_matrix_)
         self.multiscale_results_ = self._run_louvain_multiscale(self.graph_)
         
-        # Select the best resolution based on a combination of modularity and a target cluster count (e.g. around 3 like the paper)
-        # We find the resolution that gave ~3 clusters with good stability, or just use modularity.
-        # Following the paper, typically N=3 clusters is chosen. We'll pick the partition with the highest modularity
-        # that doesn't collapse everything into 1 or >10 clusters.
-        valid_res = [r for r, d in self.multiscale_results_.items() if 2 <= d['n_clusters'] <= 10]
-        if valid_res:
-            self.best_resolution_ = max(valid_res, key=lambda r: self.multiscale_results_[r]['modularity'])
-        else:
-            self.best_resolution_ = max(self.multiscale_results_.keys(), key=lambda r: self.multiscale_results_[r]['modularity'])
+        # Select the best resolution using the weighted stability/modularity score.
+        self.best_resolution_ = max(
+            self.multiscale_results_,
+            key=lambda r: (
+                self.multiscale_results_[r]['stability'] * 0.6 +
+                self.multiscale_results_[r]['modularity'] * 0.4
+            ) if 2 <= self.multiscale_results_[r]['n_clusters'] <= 12 else -1
+        )
             
         self.labels_ = self.multiscale_results_[self.best_resolution_]['labels']
         print(f"\nSelected optimal resolution: {self.best_resolution_} with {self.multiscale_results_[self.best_resolution_]['n_clusters']} clusters.")

@@ -1,42 +1,62 @@
 [
   {
-    "algorithm": "K-Means",
+    "algorithm": "KMeans (Euclidean)",
     "status": "active",
     "k": 3,
-    "silhouette": 0.72,
-    "daviesBouldin": 0.89,
-    "ariVsKmeans": 1.0,
+    "silhouette": 0.2609,
+    "daviesBouldin": 1.7035,
+    "ariVsKmeans": 0.3991,
     "noisePct": 0,
-    "notes": "Selected primary model (notebook 03)"
+    "notes": "Notebook 07 comparison output"
   },
   {
     "algorithm": "Hierarchical (Ward)",
-    "status": "planned",
-    "k": null,
-    "silhouette": null,
-    "daviesBouldin": null,
-    "ariVsKmeans": null,
-    "noisePct": null,
-    "notes": "Notebook 04 — pending"
+    "status": "active",
+    "k": 4,
+    "silhouette": 0.1919,
+    "daviesBouldin": 1.8255,
+    "ariVsKmeans": 0.3264,
+    "noisePct": 0,
+    "notes": "Notebook 07 comparison output"
   },
   {
     "algorithm": "DBSCAN",
-    "status": "planned",
-    "k": null,
-    "silhouette": null,
-    "daviesBouldin": null,
-    "ariVsKmeans": null,
-    "noisePct": null,
-    "notes": "Notebook 05 — pending"
+    "status": "active",
+    "k": 4,
+    "silhouette": 0.0598,
+    "daviesBouldin": 2.4574,
+    "ariVsKmeans": 0.1601,
+    "noisePct": 4859,
+    "notes": "Notebook 07 comparison output"
   },
   {
     "algorithm": "GMM",
-    "status": "planned",
-    "k": null,
-    "silhouette": null,
-    "daviesBouldin": null,
-    "ariVsKmeans": null,
-    "noisePct": null,
-    "notes": "Notebook 06 — pending"
+    "status": "active",
+    "k": 4,
+    "silhouette": 0.1117,
+    "daviesBouldin": 2.3535,
+    "ariVsKmeans": 0.2317,
+    "noisePct": 0,
+    "notes": "Soft assignments"
+  },
+  {
+    "algorithm": "DTW (fine)",
+    "status": "active",
+    "k": 21,
+    "silhouette": -0.1319,
+    "daviesBouldin": 6.6881,
+    "ariVsKmeans": 0.0233,
+    "noisePct": 32045,
+    "notes": "Temporal input"
+  },
+  {
+    "algorithm": "DTW (merged)",
+    "status": "active",
+    "k": 3,
+    "silhouette": -0.0064,
+    "daviesBouldin": 7.492,
+    "ariVsKmeans": 0.028,
+    "noisePct": 32323,
+    "notes": "Temporal input"
   }
 ]
