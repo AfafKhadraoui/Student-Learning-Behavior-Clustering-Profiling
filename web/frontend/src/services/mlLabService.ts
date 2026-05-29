@@ -32,5 +32,10 @@ function loadMock(): MlLabBundle {
 
 export async function fetchMlLabData(): Promise<MlLabBundle> {
   if (USE_MOCK_API) return Promise.resolve(loadMock())
-  return apiGet<MlLabBundle>('/ml-lab')
+  try {
+    return await apiGet<MlLabBundle>('/ml-lab')
+  } catch (error) {
+    console.warn('Falling back to mock ML Lab data:', error)
+    return loadMock()
+  }
 }

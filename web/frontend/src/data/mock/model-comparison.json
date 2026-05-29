@@ -33,9 +33,9 @@
     "algorithm": "GMM",
     "status": "active",
     "k": 4,
-    "silhouette": 0.1117,
-    "daviesBouldin": 2.3535,
-    "ariVsKmeans": 0.2317,
+    "silhouette": 0.1545,
+    "daviesBouldin": 2.1823,
+    "ariVsKmeans": 0.2746,
     "noisePct": 0,
     "notes": "Soft assignments"
   },

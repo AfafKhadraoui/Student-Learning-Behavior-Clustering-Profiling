@@ -17,7 +17,12 @@ export async function fetchStudents(filters?: StudentFilters): Promise<Student[]
   if (filters?.risk && filters.risk !== 'all') params.set('risk', filters.risk)
   if (filters?.search) params.set('q', filters.search)
   const query = params.toString()
-  return apiGet<Student[]>(`/students${query ? `?${query}` : ''}`)
+  try {
+    return await apiGet<Student[]>(`/students${query ? `?${query}` : ''}`)
+  } catch (error) {
+    console.warn('Falling back to mock student data:', error)
+    return filterStudents(studentsData as Student[], filters)
+  }
 }
 
 export function filterStudents(students: Student[], filters?: StudentFilters): Student[] {
