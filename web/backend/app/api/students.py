@@ -30,18 +30,24 @@ def list_students(
 
     df = ds.master.copy()
 
-    # Build brief for every row first (fast — just column access)
-    briefs = df.apply(build_student_brief, axis=1).tolist()
-
-    # Filter
-    if cluster != "all":
-        briefs = [b for b in briefs if cluster.lower() in b.cluster.lower()]
-    if risk != "all":
-        briefs = [b for b in briefs if b.risk == risk]
+    # 1. Filter by student ID search query (fast vectorized string match)
     if q:
-        briefs = [b for b in briefs if q.lower() in b.id.lower()]
+        df = df[df["id_student"].astype(str).str.contains(str(q), case=False, na=False)]
 
-    return briefs[offset : offset + limit]
+    # 2. Filter by GMM cluster name
+    if cluster != "all":
+        df = df[df.apply(lambda r: cluster.lower() in cluster_name(r).lower(), axis=1)]
+
+    # 3. Filter by risk level
+    if risk != "all":
+        df = df[df.apply(lambda r: infer_risk(r) == risk, axis=1)]
+
+    # 4. Slice the filtered DataFrame (reduce rows to limit/offset)
+    sliced_df = df.iloc[offset : offset + limit]
+
+    # 5. Build briefs only for the sliced subset
+    briefs = sliced_df.apply(build_student_brief, axis=1).tolist()
+    return briefs
 
 
 @router.get("/{student_id}", response_model=StudentDetail)

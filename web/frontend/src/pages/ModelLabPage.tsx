@@ -6,6 +6,7 @@ import {
   FileCode2,
   Layers,
   Sparkles,
+  Loader2,
 } from 'lucide-react'
 import { KSelectionCharts } from '@/components/charts/KSelectionCharts'
 import { DashboardCard } from '@/components/common/DashboardCard'
@@ -17,6 +18,7 @@ import { CardContent, CardDescription, CardHeader, CardTitle } from '@/component
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useApp } from '@/context/AppContext'
 import { useMlLab } from '@/hooks/useMlLab'
+import { runNotebook } from '@/services/mlLabService'
 import type { ClusteringAlgorithm, ModelComparisonRow } from '@/types/mlLab'
 import { cn } from '@/lib/utils'
 
@@ -24,6 +26,20 @@ export function ModelLabPage() {
   const { data, loading, error } = useMlLab()
   const { navigateToStudents } = useApp()
   const [selectedAlgo, setSelectedAlgo] = useState<string>('kmeans')
+  const [runningSteps, setRunningSteps] = useState<Record<string, boolean>>({})
+
+  const handleRunNotebook = async (id: string) => {
+    setRunningSteps((prev) => ({ ...prev, [id]: true }))
+    try {
+      await runNotebook(id)
+      alert(`Notebook step ${id} execution started in background! Check backend logs for progress.`)
+    } catch (err) {
+      console.error(err)
+      alert(`Failed to start execution for notebook step ${id}`)
+    } finally {
+      setRunningSteps((prev) => ({ ...prev, [id]: false }))
+    }
+  }
 
   if (loading) return <LoadingState label="Loading ML pipeline..." />
   if (error || !data) {
@@ -45,29 +61,37 @@ export function ModelLabPage() {
       />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-        {data.pipeline.map((step) => (
-          <button
-            key={step.id}
-            type="button"
-            className={cn(
-              'rounded-xl border p-3 text-left transition-all hover:border-[#FE981E]/40',
-              step.status === 'complete'
-                ? 'border-[#34D399]/30 bg-[#34D399]/5'
-                : 'border-white/10 bg-white/5',
-            )}
-          >
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <span className="text-xs font-medium text-[#9A9099]">NB {step.id}</span>
-              {step.status === 'complete' ? (
-                <CheckCircle2 className="size-4 text-[#34D399]" />
-              ) : (
-                <Clock className="size-4 text-[#D9D9D9]/40" />
+        {data.pipeline.map((step) => {
+          const isRunning = !!runningSteps[step.id]
+          return (
+            <button
+              key={step.id}
+              type="button"
+              disabled={isRunning}
+              onClick={() => handleRunNotebook(step.id)}
+              className={cn(
+                'rounded-xl border p-3 text-left transition-all hover:border-[#FE981E]/40',
+                step.status === 'complete'
+                  ? 'border-[#34D399]/30 bg-[#34D399]/5'
+                  : 'border-white/10 bg-white/5',
+                isRunning && 'opacity-60 cursor-wait'
               )}
-            </div>
-            <p className="text-sm font-semibold text-white">{step.name}</p>
-            <p className="mt-1 truncate text-xs text-[#D9D9D9]/50">{step.output}</p>
-          </button>
-        ))}
+            >
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-xs font-medium text-[#9A9099]">NB {step.id}</span>
+                {isRunning ? (
+                  <Loader2 className="size-4 animate-spin text-[#FE981E]" />
+                ) : step.status === 'complete' ? (
+                  <CheckCircle2 className="size-4 text-[#34D399]" />
+                ) : (
+                  <Clock className="size-4 text-[#D9D9D9]/40" />
+                )}
+              </div>
+              <p className="text-sm font-semibold text-white">{step.name}</p>
+              <p className="mt-1 truncate text-xs text-[#D9D9D9]/50">{isRunning ? 'Running headless...' : step.output}</p>
+            </button>
+          )
+        })}
       </div>
 
       <Tabs defaultValue="k-selection">

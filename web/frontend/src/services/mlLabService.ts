@@ -39,3 +39,11 @@ export async function fetchMlLabData(): Promise<MlLabBundle> {
     return loadMock()
   }
 }
+
+export async function runNotebook(notebookId: string): Promise<{ message: string; status: string }> {
+  const { apiPost } = await import('@/services/api/client')
+  if (USE_MOCK_API) {
+    return Promise.resolve({ message: 'Mock execution started', status: 'running' })
+  }
+  return await apiPost<{ message: string; status: string }>(`/ml-lab/run/${notebookId}`)
+}

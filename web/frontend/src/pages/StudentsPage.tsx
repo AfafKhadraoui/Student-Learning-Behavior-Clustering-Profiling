@@ -14,6 +14,8 @@ const CLUSTER_OPTIONS = [
   { value: 'Engaged Last-Minute Learners', label: 'Last-Minute (On-Track)' },
   { value: 'Struggling Students', label: 'Struggling' },
   { value: 'Disengaged / Withdrawn', label: 'Disengaged' },
+  { value: 'Average Engagers', label: 'Average Engagers' },
+  { value: 'Consistent Learners', label: 'Consistent Learners' },
 ]
 
 export function StudentsPage() {

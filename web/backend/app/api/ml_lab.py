@@ -9,7 +9,11 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
+import os
+import sys
+import time
+from pathlib import Path
 
 from app.schemas.dashboard import (
     ClusteringAlgorithm, ClusterProfile,
@@ -19,6 +23,71 @@ from app.schemas.dashboard import (
 from app.core.data_loader import get_data_store
 
 router = APIRouter()
+
+# Notebook ID to file name mapping
+NOTEBOOK_MAP = {
+    "00": "00_data_engineering",
+    "01": "01_eda",
+    "02": "02_feature_engineering",
+    "03": "03_kmeans_clustering",
+    "04": "04_hierarchical_clustering",
+    "05": "05_dbscan_clustering",
+    "06": "06_gmm_clustering",
+    "07": "07_model_comparison",
+    "09": "09_research_paper_dtw_pure_raw",
+}
+
+def execute_notebook_background(notebook_id: str):
+    notebook_name = NOTEBOOK_MAP.get(notebook_id)
+    if not notebook_name:
+        return
+    
+    import nbformat
+    from nbclient import NotebookClient
+    
+    root = Path(__file__).resolve().parents[4]
+    notebooks_dir = root / "notebooks"
+    nb_path = notebooks_dir / f"{notebook_name}.ipynb"
+    
+    os.environ["OMP_NUM_THREADS"] = "1"
+    os.environ["MKL_NUM_THREADS"] = "1"
+    
+    try:
+        nb = nbformat.read(nb_path, as_version=4)
+        client = NotebookClient(
+            nb,
+            timeout=1800,
+            kernel_name="python3",
+            resources={"metadata": {"path": str(notebooks_dir)}},
+        )
+        
+        orig_cwd = Path.cwd()
+        os.chdir(notebooks_dir)
+        try:
+            client.execute()
+        finally:
+            os.chdir(orig_cwd)
+            
+        nbformat.write(nb, nb_path)
+        print(f"Successfully executed notebook {notebook_name} from web lab!")
+        
+        # Invalidate the DataStore cache so the fresh outputs are loaded immediately!
+        ds = get_data_store()
+        get_data_store.cache_clear()
+        
+        # If the GMM notebook was run, GMM csv exists. If DTW notebook was run, we can also reconstruct the dtw CSV!
+        if notebook_id == "09":
+            import subprocess
+            py_executable = r"C:\Users\Sadj\AppData\Local\Programs\Python\Python311\python.exe"
+            script_path = root / "scratch" / "create_dtw_csv.py"
+            if not script_path.exists():
+                script_path = Path("C:/Users/Sadj/.gemini/antigravity/brain/9a4967d5-69ae-4e41-9ffa-cb25381733f5/scratch/create_dtw_csv.py")
+            if script_path.exists():
+                subprocess.run([py_executable, str(script_path)], check=True)
+                
+    except Exception as e:
+        print(f"Error running notebook {notebook_name}: {e}")
+
 
 # ── Static metadata about algorithms ─────────────────────────────────────────
 ALGORITHMS: list[ClusteringAlgorithm] = [
@@ -47,7 +116,7 @@ ALGORITHMS: list[ClusteringAlgorithm] = [
         name="DBSCAN",
         description="Density-based. No k required. Marks low-density students as noise (-1). Useful for outlier detection.",
         notebook="05_dbscan_clustering",
-        artifact="models/dbscan.pkl",
+        artifact="models/dbscan_model.pkl",
         status="planned",
         features=17,
     ),
@@ -79,7 +148,7 @@ PIPELINE_STEPS: list[PipelineStep] = [
     PipelineStep(id="02", name="Feature Engineering", notebook="02_feature_engineering", output="FEATURE_COLS in src/", status="complete"),
     PipelineStep(id="03", name="K-Means", notebook="03_kmeans_clustering", output="kmeans.pkl", status="complete"),
     PipelineStep(id="04", name="Hierarchical", notebook="04_hierarchical_clustering", output="hc_model.pkl", status="complete"),
-    PipelineStep(id="05", name="DBSCAN", notebook="05_dbscan_clustering", output="dbscan.pkl", status="planned"),
+    PipelineStep(id="05", name="DBSCAN", notebook="05_dbscan_clustering", output="dbscan_model.pkl", status="planned"),
     PipelineStep(id="06", name="GMM", notebook="06_gmm_clustering", output="gmm.pkl", status="complete"),
     PipelineStep(id="07", name="Model Comparison", notebook="07_model_comparison", output="model_comparison_summary.csv", status="complete"),
     PipelineStep(id="09", name="DTW (raw)", notebook="09_research_paper_dtw_pure_raw", output="dtw_cluster_merge.pkl", status="complete"),
@@ -87,7 +156,9 @@ PIPELINE_STEPS: list[PipelineStep] = [
 
 
 @router.get("", response_model=MlLabBundle)
-def get_ml_lab():
+def get_ml_lab(reload: bool = False):
+    if reload:
+        get_data_store.cache_clear()
     ds = get_data_store()
 
     return MlLabBundle(
@@ -141,6 +212,15 @@ def get_cluster_stats(model: str):
         rows.append(row)
 
     return rows
+
+
+@router.post("/run/{notebook_id}")
+def run_notebook_endpoint(notebook_id: str, background_tasks: BackgroundTasks):
+    if notebook_id not in NOTEBOOK_MAP:
+        raise HTTPException(status_code=400, detail="Invalid notebook ID")
+    
+    background_tasks.add_task(execute_notebook_background, notebook_id)
+    return {"message": f"Execution of notebook {notebook_id} started in background", "status": "running"}
 
 
 # ── Internal builders ─────────────────────────────────────────────────────────

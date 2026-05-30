@@ -26,7 +26,7 @@
     "notebook": "05_dbscan_clustering",
     "status": "planned",
     "description": "Density-based clustering with noise points. Useful for outlier / disengaged detection.",
-    "artifact": "models/dbscan.pkl",
+    "artifact": "models/dbscan_model.pkl",
     "features": 20,
     "selectedK": null
   },

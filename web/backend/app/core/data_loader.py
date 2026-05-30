@@ -92,7 +92,7 @@ class DataStore:
         self.kmeans_eu     = _first_existing_pkl(m, ["kmeans.pkl", "kmeans_k3.pkl", "kmeans_k3_euclidean.pkl"])
         self.kmeans_man    = _first_existing_pkl(m, ["kmeans_k3_manhattan.pkl", "kmeans_manhattan.pkl"])
         self.hierarchical  = _first_existing_pkl(m, ["hc_model.pkl", "hierarchical.pkl"])
-        self.dbscan        = _safe_pkl(m / "dbscan.pkl")
+        self.dbscan        = _safe_pkl(m / "dbscan_model.pkl")
         self.dtw_merge     = _safe_pkl(m / "dtw_cluster_merge.pkl")
 
         # ── Master dataframe with all cluster labels merged ──────────────────
