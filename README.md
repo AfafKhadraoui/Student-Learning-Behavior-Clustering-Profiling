@@ -554,7 +554,7 @@ The repository implements four clustering approaches and one comparison notebook
 - `04_hierarchical_clustering.ipynb` provides the Ward linkage baseline.
 - `05_dbscan_clustering.ipynb` covers density-based clustering and noise points.
 - `06_gmm_clustering.ipynb` covers probabilistic clustering.
-- `07_model_comparison.ipynb` compares the model outputs.
+- `08_model_comparison.ipynb` compares the model outputs.
 
 ### K-Means results
 
@@ -634,7 +634,7 @@ The interpretation table in `reports/results/cluster_interpretation_ensia.csv` c
 | Afaf Khadraoui | Data merge, EDA, feature engineering   | `00_data_engineering.ipynb`, `01_eda.ipynb`, `02_feature_engineering.ipynb`                                    |
 | Serine Hacene  | K-Means and frontend                   | `03_kmeans_clustering.ipynb`, `web/frontend/`                                                                  |
 | Khalem Lydia   | Hierarchical clustering and DBSCAN     | `04_hierarchical_clustering.ipynb`, `05_dbscan_clustering.ipynb`                                               |
-| Amel Saidouni  | GMM, comparison, backend, DTW notebook | `06_gmm_clustering.ipynb`, `07_model_comparison.ipynb`, `08_research_paper_dtw_pure_raw.ipynb`, `web/backend/` |
+| Amel Saidouni  | GMM, comparison, backend, DTW notebook | `06_gmm_clustering.ipynb`, `08_model_comparison.ipynb`, `07_research_paper_dtw_pure_raw.ipynb`, `web/backend/` |
 
 ### Timeline
 
@@ -643,8 +643,8 @@ The interpretation table in `reports/results/cluster_interpretation_ensia.csv` c
 | 00 to 02  | Afaf Khadraoui                | Master tables and feature matrix  |
 | 03        | Serine Hacene                 | K-Means clustering notebook       |
 | 04 and 05 | Khalem Lydia                  | Hierarchical and DBSCAN notebooks |
-| 06 and 07 | Amel Saidouni                 | GMM and comparison notebook       |
-| 08        | Amel Saidouni                 | DTW raw time-series notebook      |
+| 06 and 08 | Amel Saidouni                 | GMM and comparison notebook       |
+| 07        | Amel Saidouni                 | DTW raw time-series notebook      |
 | Web layer | Serine Hacene + Amel Saidouni | Frontend and backend linking      |
 
 There is no separate `notebook 09` file in the repository. The final integration work is handled in `web/` and `reports/`.
