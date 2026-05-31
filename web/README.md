@@ -1,50 +1,43 @@
-# Web Application — OULAD Cluster Dashboard
+# Web Dashboard
 
-Optional deliverable for demo day: visualize clusters and at-risk students without re-running notebooks.
+This folder contains the optional dashboard for the student clustering project.
 
-## Layout
+## Structure
 
-```
+```text
 web/
-├── backend/     # Python API — loads models/*.pkl + processed CSVs
-└── frontend/    # React/Vue/static UI — calls the API
+├── backend/   # FastAPI service that reads saved models and processed tables
+└── frontend/  # Vite + React UI for cluster views and student lookup
 ```
 
 ## Data flow
 
-1. **Notebooks + `src/`** train models and write `data/processed/master_with_clusters.csv`
-2. **`models/scaler.pkl`** + **`models/kmeans.pkl`** (or chosen primary model) are loaded by the API
-3. **Frontend** requests cluster stats, PCA scatter data, and at-risk list via REST
+1. The notebooks and `src/` modules generate `data/processed/` and `models/` artifacts.
+2. The backend loads those artifacts and exposes cluster and student endpoints.
+3. The frontend consumes the API and renders charts, summaries, and lookup views.
 
-## Suggested stack
+## Backend
 
-| Layer | Technology | Why |
-|-------|------------|-----|
-| Backend | FastAPI + uvicorn | Lightweight, auto OpenAPI docs, easy `src/` imports |
-| Frontend | React + Vite (or Streamlit for faster MVP) | Interactive charts for jury demo |
+The backend uses FastAPI and Uvicorn. Its dependencies are listed in `web/backend/requirements.txt`.
 
-## Development
+Typical run commands from the repository root:
 
 ```bash
-# Backend (from repo root)
 cd web/backend
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
+```
 
-# Frontend
+## Frontend
+
+The frontend uses React, TypeScript, and Vite.
+
+```bash
 cd web/frontend
 npm install
 npm run dev
 ```
 
-## API endpoints (planned)
+## Intended scope
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/health` | Service status |
-| GET | `/clusters/summary` | Cluster sizes and labels |
-| GET | `/clusters/{id_student}` | Cluster + risk for one student |
-| GET | `/visualization/pca` | PC1/PC2 points for scatter plot |
-| GET | `/at-risk` | List of flagged students |
-
-Implement handlers in `web/backend/app/main.py` using artifacts from `models/` and `data/processed/`.
+The dashboard is a view layer over the pipeline output. It should not rebuild the clustering workflow or re-run the notebooks.
